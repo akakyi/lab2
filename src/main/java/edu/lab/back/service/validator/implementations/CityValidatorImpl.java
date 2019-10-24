@@ -5,10 +5,9 @@ import edu.lab.back.service.validator.CityValidator;
 import edu.lab.back.util.ValidationMessages;
 import edu.lab.back.util.exception.InvalidPayloadException;
 import lombok.NonNull;
+import org.springframework.stereotype.Component;
 
-import javax.ejb.Stateless;
-
-@Stateless
+@Component
 public class CityValidatorImpl implements CityValidator {
 
     @Override

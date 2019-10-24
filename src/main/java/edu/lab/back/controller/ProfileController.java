@@ -5,104 +5,83 @@ import edu.lab.back.json.response.ProfileResponseJson;
 import edu.lab.back.service.crud.ProfileCrudService;
 import edu.lab.back.service.validator.ProfileValidator;
 import edu.lab.back.util.UrlPatterns;
-import edu.lab.back.util.ValidationMessages;
 import edu.lab.back.util.exception.InvalidPayloadException;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.inject.Inject;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import javax.websocket.server.PathParam;
 import java.util.List;
 
-@WebServlet(urlPatterns = {
-    ProfileController.CONTROLLER_BASE_URL
-})
-@NoArgsConstructor
-public class ProfileController extends BaseHttpServlet {
+@Controller
+@RequestMapping(ProfileController.CONTROLLER_BASE_URL)
+public class ProfileController {
 
     public static final String CONTROLLER_BASE_URL = UrlPatterns.CRUD_BASE_URL + "/profile";
 
-    private static final String ID_PATH_VARIABLE_NAME = "id";
+    private static final String PROFILE_PARAM_NAME = "profile";
 
-    @Inject
-    private ProfileCrudService profileCrudService;
+    private static final String ALL_PROFILES_PARAM_NAME = "all_profiles";
 
-    @Inject
-    private ProfileValidator profileValidator;
+    private final ProfileCrudService profileCrudService;
 
-    @Override
-    protected void doGet(
-        @NonNull final HttpServletRequest req,
-        @NonNull final HttpServletResponse resp
-    ) throws ServletException, IOException
+    private final ProfileValidator profileValidator;
+
+    public ProfileController(
+        @NonNull final ProfileCrudService profileCrudService,
+        @NonNull final ProfileValidator profileValidator
+    )
     {
-        final String idString = req.getParameter(ID_PATH_VARIABLE_NAME);
-
-        if (idString != null) {
-            try {
-                final ProfileResponseJson profile = this.profileCrudService.getById(idString);
-                this.writeStringResult(profile.toJsonString(), resp);
-            } catch (InvalidPayloadException e) {
-                this.writeValidationError(e.getMessage(), resp);
-            }
-        } else {
-            final List<ProfileResponseJson> allProfiles = this.profileCrudService.getAll();
-            this.writeResult(allProfiles, resp);
-        }
+        this.profileCrudService = profileCrudService;
+        this.profileValidator = profileValidator;
     }
 
-    @Override
-    protected void doPost(
-        @NonNull final HttpServletRequest req,
-        @NonNull final HttpServletResponse resp
-    ) throws ServletException, IOException
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    protected ProfileResponseJson getProfile(
+        @PathParam("id") String idString,
+        ModelMap model
+    ) throws InvalidPayloadException
     {
-        try {
-            final ProfileRequestJson profileJson = this.readRequest(req, ProfileRequestJson.class);
+        final ProfileResponseJson profile = this.profileCrudService.getById(idString);
+        model.addAttribute(PROFILE_PARAM_NAME, profile);
+
+        return profile;
+    }
+
+    @RequestMapping(method = RequestMethod.GET)
+    protected List<ProfileResponseJson> getAllProfiles(ModelMap model) throws InvalidPayloadException
+    {
+        final List<ProfileResponseJson> profiles = this.profileCrudService.getAll();
+        model.addAttribute(ALL_PROFILES_PARAM_NAME, profiles);
+
+        return profiles;
+    }
+
+    @RequestMapping(method = RequestMethod.POST)
+    protected ProfileResponseJson save(@RequestBody ProfileRequestJson profileJson) throws InvalidPayloadException
+    {
             this.profileValidator.validateSave(profileJson);
             final ProfileResponseJson saved = this.profileCrudService.save(profileJson);
-            this.writeStringResult(saved.toJsonString(), resp);
-        } catch (IOException e) {
-            this.writeValidationError(ValidationMessages.INVALID_REQUEST_JSON, resp);
-        } catch (InvalidPayloadException e) {
-            this.writeValidationError(e.getMessage(), resp);
-        }
+
+            return saved;
     }
 
-    @Override
-    protected void doPut(
-        @NonNull final HttpServletRequest req,
-        @NonNull final HttpServletResponse resp
-    ) throws ServletException, IOException
-    {
-        try {
-            final ProfileRequestJson profileJson = this.readRequest(req, ProfileRequestJson.class);
+    @RequestMapping(method = RequestMethod.PUT)
+    protected ProfileResponseJson update(@RequestBody ProfileRequestJson profileJson) throws InvalidPayloadException {
             this.profileValidator.validateUpdate(profileJson);
             final ProfileResponseJson updated = this.profileCrudService.update(profileJson);
-            this.writeStringResult(updated.toJsonString(), resp);
-        } catch (IOException e) {
-            this.writeValidationError(ValidationMessages.INVALID_REQUEST_JSON, resp);
-        } catch (InvalidPayloadException e) {
-            this.writeValidationError(e.getMessage(), resp);
-        }
+
+            return updated;
     }
 
-    @Override
-    protected void doDelete(
-        @NonNull final HttpServletRequest req,
-        @NonNull final HttpServletResponse resp
-    ) throws ServletException, IOException
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    protected ProfileResponseJson delete(@PathParam("id") String idString) throws InvalidPayloadException
     {
-        final String idString = req.getParameter(ID_PATH_VARIABLE_NAME);
-        try {
             final ProfileResponseJson deleted = this.profileCrudService.deleteById(idString);
-            this.writeStringResult(deleted.toJsonString(), resp);
-        } catch (InvalidPayloadException e) {
-            this.writeValidationError(e.getMessage(), resp);
-        }
+
+            return deleted;
     }
 }

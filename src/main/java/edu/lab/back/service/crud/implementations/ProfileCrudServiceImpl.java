@@ -1,56 +1,72 @@
 package edu.lab.back.service.crud.implementations;
 
-import edu.lab.back.db.dao.ProfileDao;
-import edu.lab.back.db.dao.ProfileTypeDao;
 import edu.lab.back.db.entity.ProfileEntity;
 import edu.lab.back.db.entity.ProfileTypeEntity;
 import edu.lab.back.db.entity.SchoolEntity;
+import edu.lab.back.db.repositories.ProfileRepository;
+import edu.lab.back.db.repositories.ProfileTypeRepository;
 import edu.lab.back.json.request.ProfileRequestJson;
 import edu.lab.back.json.response.ProfileResponseJson;
 import edu.lab.back.service.crud.ProfileCrudService;
 import edu.lab.back.util.exception.InvalidPayloadException;
 import lombok.NonNull;
+import org.springframework.stereotype.Service;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
-@Stateless
-public class ProfileCrudServiceImpl extends BaseCrudService implements ProfileCrudService {
+@Service
+public class ProfileCrudServiceImpl extends BaseCrudService<ProfileEntity, Long> implements ProfileCrudService {
 
-    private final ProfileDao profileDao;
+    private final ProfileRepository profileRepository;
 
-    private final ProfileTypeDao profileTypeDao;
+    private final ProfileTypeRepository profileTypeRepository;
 
-    @Inject
-    public ProfileCrudServiceImpl(@NonNull final ProfileDao profileDao, @NonNull final ProfileTypeDao profileTypeDao) {
-        this.profileDao = profileDao;
-        this.profileTypeDao = profileTypeDao;
+    public ProfileCrudServiceImpl(
+        @NonNull final ProfileRepository profileRepository,
+        @NonNull final ProfileTypeRepository profileTypeRepository
+    )
+    {
+        this.profileRepository = profileRepository;
+        this.profileTypeRepository = profileTypeRepository;
+    }
+
+    @Override
+    protected ProfileRepository getRepo() {
+        return this.profileRepository;
+    }
+
+    @Override
+    protected Long getId(@NonNull final String idString) throws InvalidPayloadException {
+        return this.getLongId(idString);
     }
 
     @Override
     public ProfileResponseJson getById(@NonNull final String idString) throws InvalidPayloadException {
-        final Long id = this.getId(idString);
-        final ProfileEntity profile = this.profileDao.getById(id, ProfileEntity.class);
+        final ProfileEntity profile = this.getEntityById(idString);
+
         final ProfileResponseJson converted = ProfileResponseJson.convert(profile);
         return converted;
     }
 
     @Override
     public List<ProfileResponseJson> getAll() {
-        final List<ProfileEntity> allSchools = this.profileDao.getAll(ProfileEntity.class);
-        final List<ProfileResponseJson> result = allSchools.stream()
+        final Iterable<ProfileEntity> allProfiles = this.getAllEntityes();
+        final List<ProfileResponseJson> result = StreamSupport.stream(allProfiles.spliterator(), false)
             .map(ProfileResponseJson::convert)
             .collect(Collectors.toList());
 
+        if (result.isEmpty()) {
+            throw new EntityNotFoundException();
+        }
         return result;
     }
 
     @Override
     public ProfileResponseJson deleteById(@NonNull final String idString) throws InvalidPayloadException {
-        final Long id = this.getId(idString);
-        final ProfileEntity deletedEntity = this.profileDao.deleteById(id, ProfileEntity.class);
+        final ProfileEntity deletedEntity = this.deleteEntityById(idString);
 
         final ProfileResponseJson result = ProfileResponseJson.convert(deletedEntity);
         return result;
@@ -61,17 +77,17 @@ public class ProfileCrudServiceImpl extends BaseCrudService implements ProfileCr
         final ProfileEntity entity = new ProfileEntity();
         this.fillEntity(entity, profileJson);
 
-        final ProfileEntity saved = this.profileDao.save(entity);
+        final ProfileEntity saved = this.profileRepository.save(entity);
         final ProfileResponseJson savedJson = ProfileResponseJson.convert(saved);
         return savedJson;
     }
 
     @Override
     public ProfileResponseJson update(@NonNull final ProfileRequestJson profileJson) {
-        final ProfileEntity entity = this.profileDao.getById(profileJson.getId(), ProfileEntity.class);
+        final ProfileEntity entity = this.getEntityById(profileJson.getId());
         this.fillEntity(entity, profileJson);
 
-        final ProfileEntity saved = this.profileDao.save(entity);
+        final ProfileEntity saved = this.profileRepository.save(entity);
         final ProfileResponseJson savedJson = ProfileResponseJson.convert(saved);
         return savedJson;
     }
@@ -86,7 +102,7 @@ public class ProfileCrudServiceImpl extends BaseCrudService implements ProfileCr
         entity.setSchool(school);
 
         final String profileTypeName = profileJson.getProfileType().getName();
-        final ProfileTypeEntity profileType = this.profileTypeDao.getByName(profileTypeName);
+        final ProfileTypeEntity profileType = this.profileTypeRepository.getByName(profileTypeName);
         entity.setProfileType(profileType);
     }
 }

@@ -3,10 +3,49 @@ package edu.lab.back.service.crud.implementations;
 import edu.lab.back.util.ValidationMessages;
 import edu.lab.back.util.exception.InvalidPayloadException;
 import lombok.NonNull;
+import org.springframework.data.repository.CrudRepository;
 
-public abstract class BaseCrudService {
+import javax.persistence.EntityNotFoundException;
+import java.util.Optional;
 
-    protected Long getId(@NonNull final String idString) throws InvalidPayloadException {
+public abstract class BaseCrudService<Entity, Id> {
+
+    protected abstract Id getId(String id) throws InvalidPayloadException;
+
+    protected abstract CrudRepository<Entity, Id> getRepo();
+
+    protected Entity getEntityById(@NonNull final String idString) throws InvalidPayloadException {
+        final Id id = this.getId(idString);
+        final Entity entity = this.getEntityById(id);
+
+        return entity;
+    }
+
+    protected Entity getEntityById(@NonNull final Id id) {
+        final Optional<Entity> entityOptional = this.getRepo().findById(id);
+        final Entity entity = entityOptional.orElseThrow(EntityNotFoundException::new);
+
+        return entity;
+    }
+
+    protected Iterable<Entity> getAllEntityes() {
+        final Iterable<Entity> allEntityes = this.getRepo().findAll();
+
+        return allEntityes;
+    }
+
+    protected Entity deleteEntityById(@NonNull final String idString) throws InvalidPayloadException {
+        final Id id = this.getId(idString);
+        final CrudRepository<Entity, Id> repo = this.getRepo();
+
+        final Optional<Entity> entityOptional = repo.findById(id);
+        final Entity entity = entityOptional.orElseThrow(EntityNotFoundException::new);
+        repo.delete(entity);
+
+        return entity;
+    }
+
+    protected Long getLongId(@NonNull final String idString) throws InvalidPayloadException {
         try {
             final long id = Long.parseLong(idString);
             return id;

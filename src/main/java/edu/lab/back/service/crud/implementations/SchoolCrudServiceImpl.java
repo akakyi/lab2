@@ -1,43 +1,49 @@
 package edu.lab.back.service.crud.implementations;
 
-import edu.lab.back.db.dao.SchoolDao;
 import edu.lab.back.db.entity.CityEntity;
 import edu.lab.back.db.entity.SchoolEntity;
+import edu.lab.back.db.repositories.SchoolRepository;
 import edu.lab.back.json.request.SchoolRequestJson;
 import edu.lab.back.json.response.SchoolResponseJson;
 import edu.lab.back.service.crud.SchoolCrudService;
 import edu.lab.back.util.exception.InvalidPayloadException;
 import lombok.NonNull;
+import org.springframework.stereotype.Service;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
-@Stateless
-@Transactional(rollbackOn = Exception.class)
-public class SchoolCrudServiceImpl extends BaseCrudService implements SchoolCrudService {
+@Service
+public class SchoolCrudServiceImpl extends BaseCrudService<SchoolEntity, Long> implements SchoolCrudService {
 
-    private final SchoolDao schoolDao;
+    private final SchoolRepository schoolRepository;
 
-    @Inject
-    public SchoolCrudServiceImpl(@NonNull final SchoolDao schoolDao) {
-        this.schoolDao = schoolDao;
+    public SchoolCrudServiceImpl(@NonNull final SchoolRepository schoolRepository) {
+        this.schoolRepository = schoolRepository;
+    }
+
+    @Override
+    protected SchoolRepository getRepo() {
+        return this.schoolRepository;
+    }
+
+    @Override
+    protected Long getId(@NonNull final String idString) throws InvalidPayloadException {
+        return this.getLongId(idString);
     }
 
     @Override
     public SchoolResponseJson getById(final String idStr) throws InvalidPayloadException {
-        final Long id = this.getId(idStr);
-        final SchoolEntity school = this.schoolDao.getById(id, SchoolEntity.class);
+        final SchoolEntity school = this.getEntityById(idStr);
         final SchoolResponseJson converted = SchoolResponseJson.convert(school);
         return converted;
     }
 
     @Override
     public List<SchoolResponseJson> getAll() {
-        final List<SchoolEntity> allSchools = this.schoolDao.getAll(SchoolEntity.class);
-        final List<SchoolResponseJson> result = allSchools.stream()
+        final Iterable<SchoolEntity> allSchools = this.getAllEntityes();
+        final List<SchoolResponseJson> result = StreamSupport.stream(allSchools.spliterator(), false)
             .map(SchoolResponseJson::convert)
             .collect(Collectors.toList());
 
@@ -46,8 +52,7 @@ public class SchoolCrudServiceImpl extends BaseCrudService implements SchoolCrud
 
     @Override
     public SchoolResponseJson deleteById(@NonNull final String idString) throws InvalidPayloadException {
-        final Long id = this.getId(idString);
-        final SchoolEntity deletedEntity = this.schoolDao.deleteById(id, SchoolEntity.class);
+        final SchoolEntity deletedEntity = this.deleteEntityById(idString);
 
         final SchoolResponseJson result = SchoolResponseJson.convert(deletedEntity);
         return result;
@@ -64,7 +69,7 @@ public class SchoolCrudServiceImpl extends BaseCrudService implements SchoolCrud
         city.setId(schoolRequestJson.getCityId());
         entity.setCity(city);
 
-        final SchoolEntity saved = this.schoolDao.save(entity);
+        final SchoolEntity saved = this.schoolRepository.save(entity);
         final SchoolResponseJson savedJson = SchoolResponseJson.convert(saved);
         return savedJson;
     }
@@ -72,7 +77,7 @@ public class SchoolCrudServiceImpl extends BaseCrudService implements SchoolCrud
     @Override
     public SchoolResponseJson update(@NonNull final SchoolRequestJson schoolJson) {
         final Long schoolId = schoolJson.getId();
-        final SchoolEntity school = this.schoolDao.getById(schoolId, SchoolEntity.class);
+        final SchoolEntity school = this.getEntityById(schoolId);
 
         final CityEntity city = new CityEntity();
         city.setId(schoolJson.getCityId());
@@ -80,7 +85,7 @@ public class SchoolCrudServiceImpl extends BaseCrudService implements SchoolCrud
 
         school.setName(schoolJson.getName());
 
-        final SchoolEntity updated = this.schoolDao.update(school);
+        final SchoolEntity updated = this.schoolRepository.save(school);
         final SchoolResponseJson updatedJson = SchoolResponseJson.convert(updated);
         return updatedJson;
     }

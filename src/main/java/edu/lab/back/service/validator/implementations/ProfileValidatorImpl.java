@@ -1,7 +1,7 @@
 package edu.lab.back.service.validator.implementations;
 
-import edu.lab.back.db.dao.ProfileTypeDao;
-import edu.lab.back.db.dao.SchoolDao;
+import edu.lab.back.db.repositories.ProfileTypeRepository;
+import edu.lab.back.db.repositories.SchoolRepository;
 import edu.lab.back.db.entity.SchoolEntity;
 import edu.lab.back.json.request.ProfileRequestJson;
 import edu.lab.back.service.validator.ProfileValidator;
@@ -9,21 +9,20 @@ import edu.lab.back.util.ProfileTypeEnum;
 import edu.lab.back.util.ValidationMessages;
 import edu.lab.back.util.exception.InvalidPayloadException;
 import lombok.NonNull;
+import org.springframework.stereotype.Component;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import java.util.Optional;
 
-@Stateless
+@Component
 public class ProfileValidatorImpl implements ProfileValidator {
 
-    private final ProfileTypeDao profileTypeDao;
+    private final ProfileTypeRepository profileTypeRepository;
 
-    private final SchoolDao schoolDao;
+    private final SchoolRepository schoolRepository;
 
-    @Inject
-    public ProfileValidatorImpl(@NonNull final ProfileTypeDao profileTypeDao, @NonNull final SchoolDao schoolDao) {
-        this.profileTypeDao = profileTypeDao;
-        this.schoolDao = schoolDao;
+    public ProfileValidatorImpl(@NonNull final ProfileTypeRepository profileTypeRepository, @NonNull final SchoolRepository schoolRepository) {
+        this.profileTypeRepository = profileTypeRepository;
+        this.schoolRepository = schoolRepository;
     }
 
     @Override
@@ -58,7 +57,7 @@ public class ProfileValidatorImpl implements ProfileValidator {
         if (profileType == null) {
             throw new InvalidPayloadException(ValidationMessages.INVALID_REQUEST_JSON);
         }
-//        final ProfileTypeEntity type = this.profileTypeDao.getByName(profileType.getName());
+//        final ProfileTypeEntity type = this.profileTypeRepository.getByName(profileType.getName());
 //        if (type == null) {
 //            throw new InvalidPayloadException(ValidationMessages.INVALID_REQUEST_JSON);
 //        }
@@ -67,8 +66,8 @@ public class ProfileValidatorImpl implements ProfileValidator {
         if (schoolId == null) {
             throw new InvalidPayloadException(ValidationMessages.INVALID_REQUEST_JSON);
         }
-        final SchoolEntity school = this.schoolDao.getById(schoolId, SchoolEntity.class);
-        if (school == null) {
+        final Optional<SchoolEntity> school = this.schoolRepository.findById(schoolId);
+        if (!school.isPresent()) {
             throw new InvalidPayloadException(ValidationMessages.REFERRED_ENTITY_NOT_EXIST);
         }
     }

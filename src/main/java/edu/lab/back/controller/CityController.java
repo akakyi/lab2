@@ -5,123 +5,73 @@ import edu.lab.back.json.response.CityResponseJson;
 import edu.lab.back.service.crud.CityCrudService;
 import edu.lab.back.service.validator.CityValidator;
 import edu.lab.back.util.UrlPatterns;
-import edu.lab.back.util.ValidationMessages;
 import edu.lab.back.util.exception.InvalidPayloadException;
-import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.inject.Inject;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import javax.websocket.server.PathParam;
 import java.util.List;
 
-@WebServlet(urlPatterns = {
-    CityController.CONTROLLER_BASE_URL
-})
-@NoArgsConstructor
-public class CityController extends BaseHttpServlet {
+@Controller
+@RequestMapping(CityController.CONTROLLER_BASE_URL)
+public class CityController {
 
     public final static String CONTROLLER_BASE_URL = UrlPatterns.CRUD_BASE_URL + "/city";
 
-    private static final String ID_PATH_VARIABLE_NAME = "id";
+    private static final String CITY_PARAM_NAME = "city";
 
-    @Inject
-    private CityCrudService cityCrudService;
+    private static final String ALL_CITYES_PARAM_NAME = "all_cityes";
 
-    @Inject
-    private CityValidator validator;
+    private final CityCrudService cityCrudService;
 
-    /**
-     * Возвращает города. Если передан параметр id, то вернёт только один объект.
-     * @param req   an {@link HttpServletRequest} object that
-     *                  contains the request the client has made
-     *                  of the servlet
-     *
-     * @param resp  an {@link HttpServletResponse} object that
-     *                  contains the response the servlet sends
-     *                  to the client
-     *
-     * @throws IOException   if an input or output error is
-     *                              detected when the servlet handles
-     *                              the GET request
-     *
-     * @throws ServletException  if the request for the GET
-     *                                  could not be handled
-     */
-    @Override
-    public void doGet(
-        final HttpServletRequest req,
-        final HttpServletResponse resp
-    ) throws ServletException, IOException
-    {
-        final String idString = req.getParameter(ID_PATH_VARIABLE_NAME);
+    private final CityValidator validator;
 
-        if (idString != null) {
-            try {
-                final CityResponseJson city = this.cityCrudService.getById(idString);
-                this.writeStringResult(city.toJsonString(), resp);
-            } catch (InvalidPayloadException e) {
-                this.writeValidationError(e.getMessage(), resp);
-            }
-        } else {
-            final List<CityResponseJson> allCities = this.cityCrudService.getAll();
-            this.writeResult(allCities, resp);
-        }
+    public CityController(@NonNull final CityCrudService cityCrudService, @NonNull final CityValidator validator) {
+        this.cityCrudService = cityCrudService;
+        this.validator = validator;
     }
 
-    @Override
-    public void doPost(
-        final HttpServletRequest req,
-        final HttpServletResponse resp
-    ) throws ServletException, IOException
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public CityResponseJson getCity (@PathParam("id") String idString, ModelMap model) throws InvalidPayloadException
     {
-        final CityRequestJson cityJson;
-        try {
-            cityJson = this.readRequest(req, CityRequestJson.class);
-            this.validator.validateSave(cityJson);
-            final CityResponseJson saved = this.cityCrudService.save(cityJson);
-            this.writeStringResult(saved.toJsonString(), resp);
-        } catch (IOException e) {
-            this.writeValidationError(ValidationMessages.INVALID_REQUEST_JSON, resp);
-        } catch (InvalidPayloadException e) {
-            this.writeValidationError(e.getMessage(), resp);
-        }
+        final CityResponseJson city = this.cityCrudService.getById(idString);
+        model.addAttribute(CITY_PARAM_NAME, city);
+        return city;
     }
 
-    @Override
-    protected void doPut(
-        final HttpServletRequest req,
-        final HttpServletResponse resp
-    ) throws ServletException, IOException
+    @RequestMapping(method = RequestMethod.GET)
+    public List<CityResponseJson> getAllCityes (ModelMap model) throws InvalidPayloadException
     {
-        final CityRequestJson cityJson;
-        try {
-            cityJson = this.readRequest(req, CityRequestJson.class);
-            this.validator.validateUpdate(cityJson);
-            final CityResponseJson updated = this.cityCrudService.update(cityJson);
-            this.writeStringResult(updated.toJsonString(), resp);
-        } catch (IOException e) {
-            this.writeValidationError(ValidationMessages.INVALID_REQUEST_JSON, resp);
-        } catch (InvalidPayloadException e) {
-            this.writeValidationError(e.getMessage(), resp);
-        }
+        final List<CityResponseJson> cityes = this.cityCrudService.getAll();
+        model.addAttribute(ALL_CITYES_PARAM_NAME, cityes);
+        return cityes;
     }
 
-    @Override
-    protected void doDelete(
-        final HttpServletRequest req,
-        final HttpServletResponse resp
-    ) throws ServletException, IOException
-    {
-        final String idString = req.getParameter(ID_PATH_VARIABLE_NAME);
-        try {
-            final CityResponseJson deleted = this.cityCrudService.deleteById(idString);
-            this.writeStringResult(deleted.toJsonString(), resp);
-        } catch (InvalidPayloadException e) {
-            this.writeValidationError(e.getMessage(), resp);
-        }
+    @RequestMapping(method = RequestMethod.POST)
+    public CityResponseJson save(@RequestBody CityRequestJson cityJson) throws InvalidPayloadException {
+        this.validator.validateSave(cityJson);
+        final CityResponseJson saved = this.cityCrudService.save(cityJson);
+
+        return saved;
+    }
+
+    @RequestMapping(method = RequestMethod.PUT)
+    protected CityResponseJson udpate(@RequestBody CityRequestJson cityJson) throws InvalidPayloadException {
+        this.validator.validateUpdate(cityJson);
+        final CityResponseJson updated = this.cityCrudService.update(cityJson);
+
+        return updated;
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    protected CityResponseJson delete(@PathParam("id") String idString, ModelMap model) throws InvalidPayloadException {
+        final CityResponseJson deleted = this.cityCrudService.deleteById(idString);
+
+        return deleted;
     }
 
 }

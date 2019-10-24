@@ -1,24 +1,23 @@
 package edu.lab.back.service.validator.implementations;
 
-import edu.lab.back.db.dao.CityDao;
 import edu.lab.back.db.entity.CityEntity;
+import edu.lab.back.db.repositories.CityRepository;
 import edu.lab.back.json.request.SchoolRequestJson;
 import edu.lab.back.service.validator.SchoolValidator;
 import edu.lab.back.util.ValidationMessages;
 import edu.lab.back.util.exception.InvalidPayloadException;
 import lombok.NonNull;
+import org.springframework.stereotype.Component;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import java.util.Optional;
 
-@Stateless
+@Component
 public class SchoolValidatorImpl implements SchoolValidator {
 
-    private final CityDao cityDao;
+    private final CityRepository cityRepository;
 
-    @Inject
-    public SchoolValidatorImpl(@NonNull final CityDao cityDao) {
-        this.cityDao = cityDao;
+    public SchoolValidatorImpl(@NonNull final CityRepository cityRepository) {
+        this.cityRepository = cityRepository;
     }
 
     @Override
@@ -50,8 +49,8 @@ public class SchoolValidatorImpl implements SchoolValidator {
         if (cityId == null) {
             throw new InvalidPayloadException(ValidationMessages.INVALID_REQUEST_JSON);
         }
-        final CityEntity city = this.cityDao.getById(cityId, CityEntity.class);
-        if (city == null) {
+        final Optional<CityEntity> city = this.cityRepository.findById(cityId);
+        if (!city.isPresent()) {
             throw new InvalidPayloadException(ValidationMessages.REFERRED_ENTITY_NOT_EXIST);
         }
 
