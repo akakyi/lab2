@@ -2,10 +2,10 @@ package edu.lab.back.service.crud.implementations;
 
 import edu.lab.back.util.ValidationMessages;
 import edu.lab.back.util.exception.InvalidPayloadException;
+import edu.lab.back.util.exception.ResourceNotFound;
 import lombok.NonNull;
 import org.springframework.data.repository.CrudRepository;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
 
 public abstract class BaseCrudService<Entity, Id> {
@@ -23,7 +23,7 @@ public abstract class BaseCrudService<Entity, Id> {
 
     protected Entity getEntityById(@NonNull final Id id) {
         final Optional<Entity> entityOptional = this.getRepo().findById(id);
-        final Entity entity = entityOptional.orElseThrow(EntityNotFoundException::new);
+        final Entity entity = entityOptional.orElseThrow(ResourceNotFound::new);
 
         return entity;
     }
@@ -38,8 +38,7 @@ public abstract class BaseCrudService<Entity, Id> {
         final Id id = this.getId(idString);
         final CrudRepository<Entity, Id> repo = this.getRepo();
 
-        final Optional<Entity> entityOptional = repo.findById(id);
-        final Entity entity = entityOptional.orElseThrow(EntityNotFoundException::new);
+        final Entity entity = this.getEntityById(id);
         repo.delete(entity);
 
         return entity;

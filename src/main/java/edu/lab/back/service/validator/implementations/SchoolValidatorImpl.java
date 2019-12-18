@@ -7,18 +7,17 @@ import edu.lab.back.service.validator.SchoolValidator;
 import edu.lab.back.util.ValidationMessages;
 import edu.lab.back.util.exception.InvalidPayloadException;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
 @Component
+@RequiredArgsConstructor
 public class SchoolValidatorImpl implements SchoolValidator {
 
+    @NonNull
     private final CityRepository cityRepository;
-
-    public SchoolValidatorImpl(@NonNull final CityRepository cityRepository) {
-        this.cityRepository = cityRepository;
-    }
 
     @Override
     public void validateSave(final SchoolRequestJson requestJson) throws InvalidPayloadException {

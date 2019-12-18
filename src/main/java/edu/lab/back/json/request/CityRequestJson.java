@@ -5,7 +5,6 @@ import edu.lab.back.db.entity.CityEntity;
 import edu.lab.back.json.JsonPojo;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 
 @Data
 @NoArgsConstructor
@@ -17,7 +16,11 @@ public class CityRequestJson implements JsonPojo {
     @JsonProperty(value = "name")
     private String name;
 
-    public static CityRequestJson convert(@NonNull final CityEntity cityEntity) {
+    public static CityRequestJson convert(final CityEntity cityEntity) {
+        if (cityEntity == null) {
+            return null;
+        }
+
         final CityRequestJson cityJson = new CityRequestJson();
         cityJson.setId(cityEntity.getId());
         cityJson.setName(cityEntity.getName());

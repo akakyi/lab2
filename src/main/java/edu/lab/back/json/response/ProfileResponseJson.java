@@ -7,7 +7,6 @@ import edu.lab.back.json.JsonPojo;
 import edu.lab.back.util.ProfileTypeEnum;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 
 @Data
 @NoArgsConstructor
@@ -28,7 +27,11 @@ public class ProfileResponseJson implements JsonPojo {
     @JsonProperty(value = "class_level")
     private String classLevel;
 
-    public static ProfileResponseJson convert(@NonNull final ProfileEntity profileEntity) {
+    public static ProfileResponseJson convert(final ProfileEntity profileEntity) {
+        if (profileEntity == null) {
+            return null;
+        }
+
         final ProfileResponseJson result = new ProfileResponseJson();
         result.setAge(profileEntity.getAge());
         result.setClassLevel(profileEntity.getClassLevel());

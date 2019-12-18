@@ -9,21 +9,20 @@ import edu.lab.back.util.ProfileTypeEnum;
 import edu.lab.back.util.ValidationMessages;
 import edu.lab.back.util.exception.InvalidPayloadException;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
 @Component
+@RequiredArgsConstructor
 public class ProfileValidatorImpl implements ProfileValidator {
 
+    @NonNull
     private final ProfileTypeRepository profileTypeRepository;
 
+    @NonNull
     private final SchoolRepository schoolRepository;
-
-    public ProfileValidatorImpl(@NonNull final ProfileTypeRepository profileTypeRepository, @NonNull final SchoolRepository schoolRepository) {
-        this.profileTypeRepository = profileTypeRepository;
-        this.schoolRepository = schoolRepository;
-    }
 
     @Override
     public void validateSave(final ProfileRequestJson requestJson) throws InvalidPayloadException {
@@ -57,7 +56,7 @@ public class ProfileValidatorImpl implements ProfileValidator {
         if (profileType == null) {
             throw new InvalidPayloadException(ValidationMessages.INVALID_REQUEST_JSON);
         }
-//        final ProfileTypeEntity type = this.profileTypeRepository.getByName(profileType.getName());
+//        final ProfileTypeEntity type = this.profileTypeDao.getByName(profileType.getName());
 //        if (type == null) {
 //            throw new InvalidPayloadException(ValidationMessages.INVALID_REQUEST_JSON);
 //        }

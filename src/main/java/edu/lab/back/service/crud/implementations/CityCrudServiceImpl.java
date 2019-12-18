@@ -7,6 +7,7 @@ import edu.lab.back.json.response.CityResponseJson;
 import edu.lab.back.service.crud.CityCrudService;
 import edu.lab.back.util.exception.InvalidPayloadException;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -16,13 +17,11 @@ import java.util.stream.StreamSupport;
 
 @Service
 @Transactional(rollbackOn = Exception.class)
+@RequiredArgsConstructor
 public class CityCrudServiceImpl extends BaseCrudService<CityEntity, Long> implements CityCrudService {
 
+    @NonNull
     private final CityRepository cityRepository;
-
-    public CityCrudServiceImpl(@NonNull final CityRepository cityRepository) {
-        this.cityRepository = cityRepository;
-    }
 
     @Override
     protected CityRepository getRepo() {

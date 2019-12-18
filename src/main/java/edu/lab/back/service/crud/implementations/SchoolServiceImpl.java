@@ -5,9 +5,10 @@ import edu.lab.back.db.entity.SchoolEntity;
 import edu.lab.back.db.repositories.SchoolRepository;
 import edu.lab.back.json.request.SchoolRequestJson;
 import edu.lab.back.json.response.SchoolResponseJson;
-import edu.lab.back.service.crud.SchoolCrudService;
+import edu.lab.back.service.crud.SchoolService;
 import edu.lab.back.util.exception.InvalidPayloadException;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,13 +16,11 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
-public class SchoolCrudServiceImpl extends BaseCrudService<SchoolEntity, Long> implements SchoolCrudService {
+@RequiredArgsConstructor
+public class SchoolServiceImpl extends BaseCrudService<SchoolEntity, Long> implements SchoolService {
 
+    @NonNull
     private final SchoolRepository schoolRepository;
-
-    public SchoolCrudServiceImpl(@NonNull final SchoolRepository schoolRepository) {
-        this.schoolRepository = schoolRepository;
-    }
 
     @Override
     protected SchoolRepository getRepo() {
@@ -90,4 +89,8 @@ public class SchoolCrudServiceImpl extends BaseCrudService<SchoolEntity, Long> i
         return updatedJson;
     }
 
+    @Override
+    public List<SchoolResponseJson> getSchoolsByCityId(final String cityId) {
+        return null;
+    }
 }

@@ -2,50 +2,45 @@ package edu.lab.back.controller;
 
 import edu.lab.back.json.request.SchoolRequestJson;
 import edu.lab.back.json.response.SchoolResponseJson;
-import edu.lab.back.service.crud.SchoolCrudService;
+import edu.lab.back.service.crud.SchoolService;
 import edu.lab.back.service.validator.SchoolValidator;
 import edu.lab.back.util.UrlPatterns;
 import edu.lab.back.util.exception.InvalidPayloadException;
 import lombok.NonNull;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.websocket.server.PathParam;
 
-@Controller
+@RestController
 @RequestMapping(SchoolController.CONTROLLER_BASE_URL)
 public class SchoolController {
 
     public final static String CONTROLLER_BASE_URL = UrlPatterns.CRUD_BASE_URL + "/school";
 
-    private static final String SCHOOL_PARAM_NAME = "school";
-
-    private static final String ALL_SCHOOLS_PARAM_NAME = "all_schools";
-
-    private final SchoolCrudService schoolCrudService;
+    private final SchoolService schoolService;
 
     private final SchoolValidator validator;
 
+    @Autowired
     public SchoolController(
-        @NonNull final SchoolCrudService schoolCrudService,
+        @NonNull final SchoolService schoolService,
         @NonNull final SchoolValidator validator
     )
     {
-        this.schoolCrudService = schoolCrudService;
+        this.schoolService = schoolService;
         this.validator = validator;
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     protected SchoolResponseJson getSchool (
-        @PathParam("id") String idString,
-        ModelMap model
+        @PathParam("id") String idString
     ) throws InvalidPayloadException
     {
-        final SchoolResponseJson school = this.schoolCrudService.getById(idString);
-        model.addAttribute(SCHOOL_PARAM_NAME, school);
+        final SchoolResponseJson school = this.schoolService.getById(idString);
 
         return school;
     }
@@ -53,7 +48,7 @@ public class SchoolController {
     @RequestMapping(method = RequestMethod.GET)
     protected SchoolResponseJson save(@RequestBody SchoolRequestJson schoolRequestJson) throws InvalidPayloadException {
             this.validator.validateSave(schoolRequestJson);
-            final SchoolResponseJson saved = this.schoolCrudService.save(schoolRequestJson);
+            final SchoolResponseJson saved = this.schoolService.save(schoolRequestJson);
 
             return saved;
     }
@@ -64,7 +59,7 @@ public class SchoolController {
     ) throws InvalidPayloadException
     {
             this.validator.validateUpdate(schoolRequestJson);
-            final SchoolResponseJson updated = this.schoolCrudService.update(schoolRequestJson);
+            final SchoolResponseJson updated = this.schoolService.update(schoolRequestJson);
 
             return updated;
     }
@@ -72,7 +67,7 @@ public class SchoolController {
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     protected SchoolResponseJson delete(@PathParam("id") String idString) throws InvalidPayloadException
     {
-            final SchoolResponseJson deleted = this.schoolCrudService.deleteById(idString);
+            final SchoolResponseJson deleted = this.schoolService.deleteById(idString);
 
             return deleted;
     }

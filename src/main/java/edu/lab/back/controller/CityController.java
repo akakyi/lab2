@@ -7,16 +7,16 @@ import edu.lab.back.service.validator.CityValidator;
 import edu.lab.back.util.UrlPatterns;
 import edu.lab.back.util.exception.InvalidPayloadException;
 import lombok.NonNull;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.websocket.server.PathParam;
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping(CityController.CONTROLLER_BASE_URL)
 public class CityController {
 
@@ -30,24 +30,23 @@ public class CityController {
 
     private final CityValidator validator;
 
+    @Autowired
     public CityController(@NonNull final CityCrudService cityCrudService, @NonNull final CityValidator validator) {
         this.cityCrudService = cityCrudService;
         this.validator = validator;
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public CityResponseJson getCity (@PathParam("id") String idString, ModelMap model) throws InvalidPayloadException
+    public CityResponseJson getCity (@PathParam("id") String idString) throws InvalidPayloadException
     {
         final CityResponseJson city = this.cityCrudService.getById(idString);
-        model.addAttribute(CITY_PARAM_NAME, city);
         return city;
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<CityResponseJson> getAllCityes (ModelMap model) throws InvalidPayloadException
+    public List<CityResponseJson> getAllCityes ()
     {
         final List<CityResponseJson> cityes = this.cityCrudService.getAll();
-        model.addAttribute(ALL_CITYES_PARAM_NAME, cityes);
         return cityes;
     }
 
@@ -68,7 +67,7 @@ public class CityController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    protected CityResponseJson delete(@PathParam("id") String idString, ModelMap model) throws InvalidPayloadException {
+    protected CityResponseJson delete(@PathParam("id") String idString) throws InvalidPayloadException {
         final CityResponseJson deleted = this.cityCrudService.deleteById(idString);
 
         return deleted;

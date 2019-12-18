@@ -7,9 +7,10 @@ import edu.lab.back.db.repositories.ProfileRepository;
 import edu.lab.back.db.repositories.ProfileTypeRepository;
 import edu.lab.back.json.request.ProfileRequestJson;
 import edu.lab.back.json.response.ProfileResponseJson;
-import edu.lab.back.service.crud.ProfileCrudService;
+import edu.lab.back.service.crud.ProfileService;
 import edu.lab.back.util.exception.InvalidPayloadException;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -18,20 +19,14 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
-public class ProfileCrudServiceImpl extends BaseCrudService<ProfileEntity, Long> implements ProfileCrudService {
+@RequiredArgsConstructor
+public class ProfileServiceImpl extends BaseCrudService<ProfileEntity, Long> implements ProfileService {
 
+    @NonNull
     private final ProfileRepository profileRepository;
 
+    @NonNull
     private final ProfileTypeRepository profileTypeRepository;
-
-    public ProfileCrudServiceImpl(
-        @NonNull final ProfileRepository profileRepository,
-        @NonNull final ProfileTypeRepository profileTypeRepository
-    )
-    {
-        this.profileRepository = profileRepository;
-        this.profileTypeRepository = profileTypeRepository;
-    }
 
     @Override
     protected ProfileRepository getRepo() {
@@ -90,6 +85,18 @@ public class ProfileCrudServiceImpl extends BaseCrudService<ProfileEntity, Long>
         final ProfileEntity saved = this.profileRepository.save(entity);
         final ProfileResponseJson savedJson = ProfileResponseJson.convert(saved);
         return savedJson;
+    }
+
+    @Override
+    public List<ProfileResponseJson> getProfileBySchoolId(final String schoolId) throws InvalidPayloadException {
+        final Long id = this.getLongId(schoolId);
+        final List<ProfileEntity> profilesBySchoolEntities = this.profileRepository.getProfilesBySchoolId(id);
+
+        final List<ProfileResponseJson> result = profilesBySchoolEntities.stream()
+            .map(ProfileResponseJson::convert)
+            .collect(Collectors.toList());
+
+        return result;
     }
 
     private void fillEntity(@NonNull final ProfileEntity entity, @NonNull final ProfileRequestJson profileJson) {
