@@ -4,11 +4,11 @@ import edu.lab.back.json.response.SchoolResponseJson;
 import edu.lab.back.service.crud.SchoolService;
 import edu.lab.back.util.exception.InvalidPayloadException;
 import lombok.NonNull;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.websocket.server.PathParam;
 import java.util.List;
 
 @RestController
@@ -23,10 +23,10 @@ public class SchoolByCityController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     protected List<SchoolResponseJson> getSchoolsByCity (
-        @PathParam("id") String idString
+        @PathVariable("id") Long id
     ) throws InvalidPayloadException
     {
-        final List<SchoolResponseJson> schools = this.schoolService.getSchoolsByCityId(idString);
+        final List<SchoolResponseJson> schools = this.schoolService.getSchoolsByCityId(id);
 
         return schools;
     }

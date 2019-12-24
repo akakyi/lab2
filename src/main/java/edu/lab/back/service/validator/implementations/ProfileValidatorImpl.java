@@ -44,6 +44,8 @@ public class ProfileValidatorImpl implements ProfileValidator {
         if (requestJson.getId() == null) {
             throw new InvalidPayloadException(ValidationMessages.INVALID_REQUEST_JSON);
         }
+
+        this.baseValidate(requestJson);
     }
 
     private void baseValidate(@NonNull final ProfileRequestJson requestJson) throws InvalidPayloadException {

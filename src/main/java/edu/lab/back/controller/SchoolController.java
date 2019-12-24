@@ -8,12 +8,11 @@ import edu.lab.back.util.UrlPatterns;
 import edu.lab.back.util.exception.InvalidPayloadException;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.websocket.server.PathParam;
 
 @RestController
 @RequestMapping(SchoolController.CONTROLLER_BASE_URL)
@@ -37,10 +36,10 @@ public class SchoolController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     protected SchoolResponseJson getSchool (
-        @PathParam("id") String idString
+        @PathVariable("id") Long id
     ) throws InvalidPayloadException
     {
-        final SchoolResponseJson school = this.schoolService.getById(idString);
+        final SchoolResponseJson school = this.schoolService.getById(id);
 
         return school;
     }
@@ -65,9 +64,9 @@ public class SchoolController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    protected SchoolResponseJson delete(@PathParam("id") String idString) throws InvalidPayloadException
+    protected SchoolResponseJson delete(@PathVariable("id") Long id)
     {
-            final SchoolResponseJson deleted = this.schoolService.deleteById(idString);
+            final SchoolResponseJson deleted = this.schoolService.deleteById(id);
 
             return deleted;
     }

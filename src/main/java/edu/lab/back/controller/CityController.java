@@ -8,12 +8,12 @@ import edu.lab.back.util.UrlPatterns;
 import edu.lab.back.util.exception.InvalidPayloadException;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.websocket.server.PathParam;
 import java.util.List;
 
 @RestController
@@ -21,10 +21,6 @@ import java.util.List;
 public class CityController {
 
     public final static String CONTROLLER_BASE_URL = UrlPatterns.CRUD_BASE_URL + "/city";
-
-    private static final String CITY_PARAM_NAME = "city";
-
-    private static final String ALL_CITYES_PARAM_NAME = "all_cityes";
 
     private final CityCrudService cityCrudService;
 
@@ -37,9 +33,9 @@ public class CityController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public CityResponseJson getCity (@PathParam("id") String idString) throws InvalidPayloadException
+    public CityResponseJson getCity (@PathVariable(value = "id") Long id)
     {
-        final CityResponseJson city = this.cityCrudService.getById(idString);
+        final CityResponseJson city = this.cityCrudService.getById(id);
         return city;
     }
 
@@ -67,8 +63,8 @@ public class CityController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    protected CityResponseJson delete(@PathParam("id") String idString) throws InvalidPayloadException {
-        final CityResponseJson deleted = this.cityCrudService.deleteById(idString);
+    protected CityResponseJson delete(@PathVariable("id") Long id) throws InvalidPayloadException {
+        final CityResponseJson deleted = this.cityCrudService.deleteById(id);
 
         return deleted;
     }

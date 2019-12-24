@@ -8,13 +8,13 @@ import edu.lab.back.util.UrlPatterns;
 import edu.lab.back.util.exception.InvalidPayloadException;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.NotNull;
-import javax.websocket.server.PathParam;
 import java.util.List;
 
 @RestController
@@ -41,10 +41,10 @@ public class ProfileController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     protected ProfileResponseJson getProfile(
-        @PathParam("id") String idString
+        @PathVariable("id") Long id
     ) throws InvalidPayloadException
     {
-        final ProfileResponseJson profile = this.profileService.getById(idString);
+        final ProfileResponseJson profile = this.profileService.getById(id);
 
         return profile;
     }
@@ -75,9 +75,9 @@ public class ProfileController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    protected ProfileResponseJson delete(@PathParam("id") String idString) throws InvalidPayloadException
+    protected ProfileResponseJson delete(@PathVariable("id") Long id) throws InvalidPayloadException
     {
-            final ProfileResponseJson deleted = this.profileService.deleteById(idString);
+            final ProfileResponseJson deleted = this.profileService.deleteById(id);
 
             return deleted;
     }

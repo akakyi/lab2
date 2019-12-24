@@ -5,11 +5,11 @@ import edu.lab.back.service.crud.ProfileService;
 import edu.lab.back.util.exception.InvalidPayloadException;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.websocket.server.PathParam;
 import java.util.List;
 
 @RestController
@@ -25,10 +25,10 @@ public class ProfileBySchoolController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     protected List<ProfileResponseJson> getProfilesBySchool(
-        @PathParam("id") String idString
+        @PathVariable("id") Long id
     ) throws InvalidPayloadException
     {
-        final List<ProfileResponseJson> profiles = this.profileService.getProfileBySchoolId(idString);
+        final List<ProfileResponseJson> profiles = this.profileService.getProfileBySchoolId(id);
 
         return profiles;
     }

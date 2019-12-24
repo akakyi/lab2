@@ -6,7 +6,6 @@ import edu.lab.back.db.repositories.SchoolRepository;
 import edu.lab.back.json.request.SchoolRequestJson;
 import edu.lab.back.json.response.SchoolResponseJson;
 import edu.lab.back.service.crud.SchoolService;
-import edu.lab.back.util.exception.InvalidPayloadException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,13 +27,8 @@ public class SchoolServiceImpl extends BaseCrudService<SchoolEntity, Long> imple
     }
 
     @Override
-    protected Long getId(@NonNull final String idString) throws InvalidPayloadException {
-        return this.getLongId(idString);
-    }
-
-    @Override
-    public SchoolResponseJson getById(final String idStr) throws InvalidPayloadException {
-        final SchoolEntity school = this.getEntityById(idStr);
+    public SchoolResponseJson getById(final Long id) {
+        final SchoolEntity school = this.getEntityById(id);
         final SchoolResponseJson converted = SchoolResponseJson.convert(school);
         return converted;
     }
@@ -50,8 +44,8 @@ public class SchoolServiceImpl extends BaseCrudService<SchoolEntity, Long> imple
     }
 
     @Override
-    public SchoolResponseJson deleteById(@NonNull final String idString) throws InvalidPayloadException {
-        final SchoolEntity deletedEntity = this.deleteEntityById(idString);
+    public SchoolResponseJson deleteById(@NonNull final Long id) {
+        final SchoolEntity deletedEntity = this.deleteEntityById(id);
 
         final SchoolResponseJson result = SchoolResponseJson.convert(deletedEntity);
         return result;
@@ -90,7 +84,12 @@ public class SchoolServiceImpl extends BaseCrudService<SchoolEntity, Long> imple
     }
 
     @Override
-    public List<SchoolResponseJson> getSchoolsByCityId(final String cityId) {
-        return null;
+    public List<SchoolResponseJson> getSchoolsByCityId(@NonNull final Long cityId) {
+        final List<SchoolEntity> schoolsByCityId = this.schoolRepository.getSchoolsByCityId(cityId);
+        final List<SchoolResponseJson> result = schoolsByCityId.stream()
+            .map(SchoolResponseJson::convert)
+            .collect(Collectors.toList());
+
+        return result;
     }
 }

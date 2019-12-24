@@ -5,7 +5,6 @@ import edu.lab.back.db.repositories.CityRepository;
 import edu.lab.back.json.request.CityRequestJson;
 import edu.lab.back.json.response.CityResponseJson;
 import edu.lab.back.service.crud.CityCrudService;
-import edu.lab.back.util.exception.InvalidPayloadException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,13 +28,8 @@ public class CityCrudServiceImpl extends BaseCrudService<CityEntity, Long> imple
     }
 
     @Override
-    protected Long getId(@NonNull final String idString) throws InvalidPayloadException {
-        return this.getLongId(idString);
-    }
-
-    @Override
-    public CityResponseJson getById(@NonNull final String idString) throws InvalidPayloadException {
-        final CityEntity city = this.getEntityById(idString);
+    public CityResponseJson getById(@NonNull final Long id) {
+        final CityEntity city = this.getEntityById(id);
         final CityResponseJson cityResponseJson = CityResponseJson.convert(city);
 
         return cityResponseJson;
@@ -52,7 +46,7 @@ public class CityCrudServiceImpl extends BaseCrudService<CityEntity, Long> imple
     }
 
     @Override
-    public CityResponseJson deleteById(@NonNull final String idString) throws InvalidPayloadException {
+    public CityResponseJson deleteById(@NonNull final Long idString) {
         final CityEntity city = this.deleteEntityById(idString);
         final CityResponseJson deletedJson = CityResponseJson.convert(city);
 

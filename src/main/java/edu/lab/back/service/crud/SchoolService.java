@@ -6,8 +6,8 @@ import edu.lab.back.util.exception.InvalidPayloadException;
 
 import java.util.List;
 
-public interface SchoolService extends BaseCrudService<SchoolRequestJson, SchoolResponseJson> {
+public interface SchoolService extends BaseCrudService<SchoolRequestJson, SchoolResponseJson, Long> {
 
-    List<SchoolResponseJson> getSchoolsByCityId(String cityId) throws InvalidPayloadException;
+    List<SchoolResponseJson> getSchoolsByCityId(Long cityId) throws InvalidPayloadException;
 
 }

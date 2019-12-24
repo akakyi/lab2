@@ -1,5 +1,6 @@
 package edu.lab.back.db.entity;
 
+import edu.lab.back.json.ProfileTypeJson;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -26,5 +27,17 @@ public class ProfileTypeEntity {
 
     @Column(name = "name")
     private String name;
+
+    public static ProfileTypeEntity convert(final ProfileTypeJson profileTypeJson) {
+        if (profileTypeJson == null) {
+            return null;
+        }
+
+        final ProfileTypeEntity result = new ProfileTypeEntity();
+        result.setId(profileTypeJson.getId());
+        result.setName(profileTypeJson.getName());
+
+        return result;
+    }
 
 }

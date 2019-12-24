@@ -8,7 +8,6 @@ import edu.lab.back.db.repositories.ProfileTypeRepository;
 import edu.lab.back.json.request.ProfileRequestJson;
 import edu.lab.back.json.response.ProfileResponseJson;
 import edu.lab.back.service.crud.ProfileService;
-import edu.lab.back.util.exception.InvalidPayloadException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,13 +33,8 @@ public class ProfileServiceImpl extends BaseCrudService<ProfileEntity, Long> imp
     }
 
     @Override
-    protected Long getId(@NonNull final String idString) throws InvalidPayloadException {
-        return this.getLongId(idString);
-    }
-
-    @Override
-    public ProfileResponseJson getById(@NonNull final String idString) throws InvalidPayloadException {
-        final ProfileEntity profile = this.getEntityById(idString);
+    public ProfileResponseJson getById(@NonNull final Long id) {
+        final ProfileEntity profile = this.getEntityById(id);
 
         final ProfileResponseJson converted = ProfileResponseJson.convert(profile);
         return converted;
@@ -60,8 +54,8 @@ public class ProfileServiceImpl extends BaseCrudService<ProfileEntity, Long> imp
     }
 
     @Override
-    public ProfileResponseJson deleteById(@NonNull final String idString) throws InvalidPayloadException {
-        final ProfileEntity deletedEntity = this.deleteEntityById(idString);
+    public ProfileResponseJson deleteById(@NonNull final Long id) {
+        final ProfileEntity deletedEntity = this.deleteEntityById(id);
 
         final ProfileResponseJson result = ProfileResponseJson.convert(deletedEntity);
         return result;
@@ -88,8 +82,7 @@ public class ProfileServiceImpl extends BaseCrudService<ProfileEntity, Long> imp
     }
 
     @Override
-    public List<ProfileResponseJson> getProfileBySchoolId(final String schoolId) throws InvalidPayloadException {
-        final Long id = this.getLongId(schoolId);
+    public List<ProfileResponseJson> getProfileBySchoolId(final Long id) {
         final List<ProfileEntity> profilesBySchoolEntities = this.profileRepository.getProfilesBySchoolId(id);
 
         final List<ProfileResponseJson> result = profilesBySchoolEntities.stream()
