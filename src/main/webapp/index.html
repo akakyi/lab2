@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<link rel="stylesheet" type="text/css" href="style.css">
+<link rel="stylesheet" type="text/css" href="lib/jquery-ui-1.12.1.custom/jquery-ui.css">
+<head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <title>SchoolLab</title>
+</head>
+<body>
+<section class="wrapper">
+    <div id="cityColumn" class="city">
+        <p>Города</p>
+        <button id="addCityButton" onclick="addNewCityDialog()">Добавить город</button>
+        <div id="cityPlaceholder"></div>
+    </div>
+
+    <div id="schoolColumn">
+        <button id="addSchoolButton" onclick="addNewSchoolDialog()" style="display: none;">Добавить школу</button>
+        <p>Школы</p>
+        <div id="schoolPlaceholder"></div>
+    </div>
+
+    <div id="studentColumn">
+        <button id="addStudentButton" onclick="addNewStudentDialog()" style="display: none;">Добавить профиль</button>
+        <p>Профили</p>
+        <div id="studentPlaceholder"></div>
+    </div>
+</section>
+
+
+<div id="addCityDialog" title="Добавить город">
+<p>Введите название города</p>
+<input id="cityAdd" type="text" title="Введите навзание города">
+</div>
+
+
+<div id="addSchoolDialog" title="Добавить школу">
+<p>Введите название школы</p>
+<input id="schoolAdd" type="text" title="Введите название школы">
+</div>
+
+<div id="addStudentDialog" title="Добавить профиль">
+    <p>Введите имя ученика</p>
+    <input id="addProfileName" type="text" title="Введите имя профиля"/>
+    <p>Введите возраст</p>
+    <input id="addProfileAgeUpd" type="number" min="0" title="Введите возраст"/>
+    <p>Выберете тип профиля</p>
+    <select id="addProfileType" title="Тип профиля"></select>
+    <p>Введите класс</p>
+    <input id="addClassLevelUpd" type="text" title="Класс"/>
+</div>
+
+<div id="updateCityDialog" title="Обновить город">
+    <p>Введите имя города</p>
+    <input id="cityNameUpd" type="text" title="Введите имя города"/>
+</div>
+
+<div id="updateSchoolDialog" title="Обновить школу">
+    <p>Введите название школы</p>
+    <input id="schoolNameUpd" type="text" title="Введите название школы"/>
+</div>
+
+<div id="updateProfileDialog" title="Обновить профиль">
+    <p>Введите имя профиля</p>
+    <input id="profileNameUpd" type="text" title="Введите имя профиля"/>
+    <p>Введите возраст</p>
+    <input id="profileAgeUpd" type="number" min="0" title="Введите возраст"/>
+    <p>Выберете тип профиля</p>
+    <select id="profileTypeUpd" title="Тип профиля"></select>
+    <p>Введите класс</p>
+    <input id="classLevelUpd" type="text" title="Класс"/>
+</div>
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+        crossorigin="anonymous"></script>
+<script src="script.js"></script>
+<script src="render.js"></script>
+<script src="dataLoader.js"></script>
+<script src="lib/jquery-ui-1.12.1.custom/jquery-ui.js"></script>
+</body>
+</html>
