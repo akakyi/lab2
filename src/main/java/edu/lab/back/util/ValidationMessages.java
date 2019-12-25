@@ -8,4 +8,6 @@ public interface ValidationMessages {
 
     String REFERRED_ENTITY_NOT_EXIST = "Referred entity not exist!";
 
+    String CONTRAIN_VIOLATION = "Data is binded!";
+
 }

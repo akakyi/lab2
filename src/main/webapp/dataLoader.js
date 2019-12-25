@@ -271,6 +271,7 @@ function sendDeleteCity(id) { // удаление города снизу тож
             // $this.closest('cell').remove();
             cell.remove();
         },
+        error: _defaultOnError
     })
     // alert(elem)
 }
@@ -290,6 +291,7 @@ function sendDeleteSchool(id) {
             // $this.closest('.cell').remove();
             cell.remove()
         },
+        error: _defaultOnError
     });
 }
 
@@ -307,6 +309,7 @@ function sendDeleteStudent(id) {
             // $this.closest('.cell').remove();
             cell.remove()
         },
+        error: _defaultOnError
     });
 }
 

@@ -1,7 +1,10 @@
 package edu.lab.back.service.crud.implementations;
 
+import edu.lab.back.util.ValidationMessages;
+import edu.lab.back.util.exception.DataIsBindedException;
 import edu.lab.back.util.exception.ResourceNotFoundException;
 import lombok.NonNull;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;
@@ -27,7 +30,11 @@ public abstract class BaseCrudService<Entity, Id> {
         final CrudRepository<Entity, Id> repo = this.getRepo();
 
         final Entity entity = this.getEntityById(id);
-        repo.delete(entity);
+        try {
+            repo.delete(entity);
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIsBindedException(ValidationMessages.CONTRAIN_VIOLATION);
+        }
 
         return entity;
     }
