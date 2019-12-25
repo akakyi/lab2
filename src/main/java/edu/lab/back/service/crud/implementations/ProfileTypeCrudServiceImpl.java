@@ -4,7 +4,7 @@ import edu.lab.back.db.entity.ProfileTypeEntity;
 import edu.lab.back.db.repositories.ProfileTypeRepository;
 import edu.lab.back.json.ProfileTypeJson;
 import edu.lab.back.service.crud.ProfileTypeCrudService;
-import edu.lab.back.util.exception.ResourceNotFound;
+import edu.lab.back.util.exception.ResourceNotFoundException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.repository.CrudRepository;
@@ -30,7 +30,7 @@ public class ProfileTypeCrudServiceImpl
     }
 
     @Override
-    public ProfileTypeJson getById(final Integer id) throws ResourceNotFound {
+    public ProfileTypeJson getById(final Integer id) throws ResourceNotFoundException {
         final ProfileTypeEntity entity = this.getEntityById(id);
         final ProfileTypeJson result = ProfileTypeJson.convert(entity);
 
@@ -48,7 +48,7 @@ public class ProfileTypeCrudServiceImpl
     }
 
     @Override
-    public ProfileTypeJson deleteById(final Integer id) throws ResourceNotFound {
+    public ProfileTypeJson deleteById(final Integer id) throws ResourceNotFoundException {
         final ProfileTypeEntity deleted = this.deleteEntityById(id);
         final ProfileTypeJson result = ProfileTypeJson.convert(deleted);
 

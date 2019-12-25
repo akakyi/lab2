@@ -22,7 +22,7 @@ public class SchoolByCityController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    protected List<SchoolResponseJson> getSchoolsByCity (
+    public List<SchoolResponseJson> getSchoolsByCity (
         @PathVariable("id") Long id
     ) throws InvalidPayloadException
     {

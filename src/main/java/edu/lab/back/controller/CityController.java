@@ -55,7 +55,7 @@ public class CityController {
     }
 
     @RequestMapping(method = RequestMethod.PUT)
-    protected CityResponseJson udpate(@RequestBody CityRequestJson cityJson) throws InvalidPayloadException {
+    public CityResponseJson udpate(@RequestBody CityRequestJson cityJson) throws InvalidPayloadException {
         this.validator.validateUpdate(cityJson);
         final CityResponseJson updated = this.cityCrudService.update(cityJson);
 
@@ -63,7 +63,7 @@ public class CityController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    protected CityResponseJson delete(@PathVariable("id") Long id) throws InvalidPayloadException {
+    public CityResponseJson delete(@PathVariable("id") Long id) throws InvalidPayloadException {
         final CityResponseJson deleted = this.cityCrudService.deleteById(id);
 
         return deleted;

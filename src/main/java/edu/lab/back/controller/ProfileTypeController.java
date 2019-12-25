@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(value = ProfileTypeController.CONTROLLER_BASE_URL)
 @RequiredArgsConstructor
@@ -27,6 +29,14 @@ public class ProfileTypeController {
         final ProfileTypeJson profileType = this.profileTypeCrudService.getById(id);
 
         return profileType;
+    }
+
+    @RequestMapping
+    public List<ProfileTypeJson> getAll()
+    {
+        final List<ProfileTypeJson> profileTypes = this.profileTypeCrudService.getAll();
+
+        return profileTypes;
     }
 
 }

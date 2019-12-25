@@ -1,11 +1,10 @@
 package edu.lab.back.service.validator.implementations;
 
+import edu.lab.back.db.entity.SchoolEntity;
 import edu.lab.back.db.repositories.ProfileTypeRepository;
 import edu.lab.back.db.repositories.SchoolRepository;
-import edu.lab.back.db.entity.SchoolEntity;
 import edu.lab.back.json.request.ProfileRequestJson;
 import edu.lab.back.service.validator.ProfileValidator;
-import edu.lab.back.util.ProfileTypeEnum;
 import edu.lab.back.util.ValidationMessages;
 import edu.lab.back.util.exception.InvalidPayloadException;
 import lombok.NonNull;
@@ -54,8 +53,8 @@ public class ProfileValidatorImpl implements ProfileValidator {
             throw new InvalidPayloadException(ValidationMessages.INVALID_REQUEST_JSON);
         }
 
-        final ProfileTypeEnum profileType = requestJson.getProfileType();
-        if (profileType == null) {
+        final Integer profileTypeId = requestJson.getProfileTypeId();
+        if (profileTypeId == null) {
             throw new InvalidPayloadException(ValidationMessages.INVALID_REQUEST_JSON);
         }
 //        final ProfileTypeEntity type = this.profileTypeDao.getByName(profileType.getName());

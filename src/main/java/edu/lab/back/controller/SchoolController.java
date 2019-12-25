@@ -35,7 +35,7 @@ public class SchoolController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    protected SchoolResponseJson getSchool (
+    public SchoolResponseJson getSchool (
         @PathVariable("id") Long id
     ) throws InvalidPayloadException
     {
@@ -44,8 +44,8 @@ public class SchoolController {
         return school;
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    protected SchoolResponseJson save(@RequestBody SchoolRequestJson schoolRequestJson) throws InvalidPayloadException {
+    @RequestMapping(method = RequestMethod.POST)
+    public SchoolResponseJson save(@RequestBody SchoolRequestJson schoolRequestJson) throws InvalidPayloadException {
             this.validator.validateSave(schoolRequestJson);
             final SchoolResponseJson saved = this.schoolService.save(schoolRequestJson);
 
@@ -53,7 +53,7 @@ public class SchoolController {
     }
 
     @RequestMapping(method = RequestMethod.PUT)
-    protected SchoolResponseJson update(
+    public SchoolResponseJson update(
         @RequestBody SchoolRequestJson schoolRequestJson
     ) throws InvalidPayloadException
     {
@@ -64,7 +64,7 @@ public class SchoolController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    protected SchoolResponseJson delete(@PathVariable("id") Long id)
+    public SchoolResponseJson delete(@PathVariable("id") Long id)
     {
             final SchoolResponseJson deleted = this.schoolService.deleteById(id);
 

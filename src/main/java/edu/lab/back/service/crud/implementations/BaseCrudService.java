@@ -1,6 +1,6 @@
 package edu.lab.back.service.crud.implementations;
 
-import edu.lab.back.util.exception.ResourceNotFound;
+import edu.lab.back.util.exception.ResourceNotFoundException;
 import lombok.NonNull;
 import org.springframework.data.repository.CrudRepository;
 
@@ -12,7 +12,7 @@ public abstract class BaseCrudService<Entity, Id> {
 
     protected Entity getEntityById(@NonNull final Id id) {
         final Optional<Entity> entityOptional = this.getRepo().findById(id);
-        final Entity entity = entityOptional.orElseThrow(ResourceNotFound::new);
+        final Entity entity = entityOptional.orElseThrow(ResourceNotFoundException::new);
 
         return entity;
     }

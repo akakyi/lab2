@@ -40,7 +40,7 @@ public class ProfileController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    protected ProfileResponseJson getProfile(
+    public ProfileResponseJson getProfile(
         @PathVariable("id") Long id
     ) throws InvalidPayloadException
     {
@@ -50,7 +50,7 @@ public class ProfileController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    protected List<ProfileResponseJson> getAllProfiles()
+    public List<ProfileResponseJson> getAllProfiles()
     {
         final List<ProfileResponseJson> profiles = this.profileService.getAll();
 
@@ -58,7 +58,7 @@ public class ProfileController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    protected ProfileResponseJson save(@RequestBody ProfileRequestJson profileJson) throws InvalidPayloadException
+    public ProfileResponseJson save(@RequestBody ProfileRequestJson profileJson) throws InvalidPayloadException
     {
             this.profileValidator.validateSave(profileJson);
             final ProfileResponseJson saved = this.profileService.save(profileJson);
@@ -67,7 +67,7 @@ public class ProfileController {
     }
 
     @RequestMapping(method = RequestMethod.PUT)
-    protected ProfileResponseJson update(@RequestBody ProfileRequestJson profileJson) throws InvalidPayloadException {
+    public ProfileResponseJson update(@RequestBody ProfileRequestJson profileJson) throws InvalidPayloadException {
             this.profileValidator.validateUpdate(profileJson);
             final ProfileResponseJson updated = this.profileService.update(profileJson);
 
@@ -75,7 +75,7 @@ public class ProfileController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    protected ProfileResponseJson delete(@PathVariable("id") Long id) throws InvalidPayloadException
+    public ProfileResponseJson delete(@PathVariable("id") Long id) throws InvalidPayloadException
     {
             final ProfileResponseJson deleted = this.profileService.deleteById(id);
 

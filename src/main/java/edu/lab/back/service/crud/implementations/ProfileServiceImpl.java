@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -101,8 +102,8 @@ public class ProfileServiceImpl extends BaseCrudService<ProfileEntity, Long> imp
         school.setId(profileJson.getSchoolId());
         entity.setSchool(school);
 
-        final String profileTypeName = profileJson.getProfileType().getName();
-        final ProfileTypeEntity profileType = this.profileTypeRepository.getByName(profileTypeName);
-        entity.setProfileType(profileType);
+        final Integer profileTypeId = profileJson.getProfileTypeId();
+        final Optional<ProfileTypeEntity> profileType = this.profileTypeRepository.findById(profileTypeId);
+        profileType.ifPresent(entity::setProfileType);
     }
 }

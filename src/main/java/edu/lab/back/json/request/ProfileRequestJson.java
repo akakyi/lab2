@@ -2,7 +2,6 @@ package edu.lab.back.json.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.lab.back.json.JsonPojo;
-import edu.lab.back.util.ProfileTypeEnum;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -19,8 +18,8 @@ public class ProfileRequestJson implements JsonPojo {
     @JsonProperty(value = "age")
     private Integer age;
 
-    @JsonProperty(value = "profile_type")
-    private ProfileTypeEnum profileType;
+    @JsonProperty(value = "profile_type_id")
+    private Integer profileTypeId;
 
     @JsonProperty(value = "class_level")
     private String classLevel;

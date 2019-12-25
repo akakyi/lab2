@@ -4,9 +4,9 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 @NoArgsConstructor
-public class ResourceNotFound extends RuntimeException {
+public class ResourceNotFoundException extends RuntimeException {
 
-    public ResourceNotFound(@NonNull final String message) {
+    public ResourceNotFoundException(@NonNull final String message) {
         super(message);
     }
 

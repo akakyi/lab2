@@ -20,6 +20,9 @@ public class SchoolResponseJson implements JsonPojo {
     @JsonProperty(value = "name")
     private String name;
 
+    @JsonProperty(value = "city_id")
+    private Long cityId;
+
     //TODO в рамках лабы норм, но лучше бы тут лежали просто айдишники
 //    @JsonProperty(value = "profiles")
 //    private List<ProfileResponseJson> profiles;
@@ -33,6 +36,7 @@ public class SchoolResponseJson implements JsonPojo {
         SchoolResponseJson result = new SchoolResponseJson();
         result.setId(schoolEntity.getId());
         result.setName(schoolEntity.getName());
+        result.setCityId(schoolEntity.getCity().getId());
 
         if (schoolEntity.getProfiles() != null) {
             final List<Long> profilesIds = schoolEntity.getProfiles()

@@ -24,7 +24,7 @@ public class ProfileBySchoolController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    protected List<ProfileResponseJson> getProfilesBySchool(
+    public List<ProfileResponseJson> getProfilesBySchool(
         @PathVariable("id") Long id
     ) throws InvalidPayloadException
     {

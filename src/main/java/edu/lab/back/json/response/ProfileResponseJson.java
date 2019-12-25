@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.lab.back.db.entity.ProfileEntity;
 import edu.lab.back.db.entity.ProfileTypeEntity;
 import edu.lab.back.json.JsonPojo;
-import edu.lab.back.util.ProfileTypeEnum;
+import edu.lab.back.json.ProfileTypeJson;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -22,10 +22,13 @@ public class ProfileResponseJson implements JsonPojo {
     private Integer age;
 
     @JsonProperty(value = "profile_type")
-    private ProfileTypeEnum profileType;
+    private ProfileTypeJson profileType;
 
     @JsonProperty(value = "class_level")
     private String classLevel;
+
+    @JsonProperty(value = "school_id")
+    private Long schoolId;
 
     public static ProfileResponseJson convert(final ProfileEntity profileEntity) {
         if (profileEntity == null) {
@@ -39,9 +42,13 @@ public class ProfileResponseJson implements JsonPojo {
         result.setName(profileEntity.getName());
 
         final ProfileTypeEntity profileType = profileEntity.getProfileType();
+        final ProfileTypeJson type = ProfileTypeJson.convert(profileType);
         if (profileType != null) {
-            result.setProfileType(ProfileTypeEnum.getEnumByName(profileType.getName()));
+            result.setProfileType(type);
         }
+
+        final Long schoolId = profileEntity.getSchool().getId();
+        result.setSchoolId(schoolId);
 
         return result;
     }
